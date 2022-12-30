@@ -1,6 +1,7 @@
 package bfa.blair.triviaapp.di
 
 import bfa.blair.triviaapp.network.QuestionApi
+import bfa.blair.triviaapp.repository.QuestionRepository
 import bfa.blair.triviaapp.util.Constants
 import dagger.Module
 import dagger.Provides
@@ -14,6 +15,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Singleton
+    @Provides
+    fun providesQuestionRepository(api: QuestionApi) = QuestionRepository(api)
+
+
     @Singleton
     @Provides
     fun providesQuestionApi() : QuestionApi {
