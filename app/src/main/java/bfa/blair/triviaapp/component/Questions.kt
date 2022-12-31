@@ -77,5 +77,5 @@ fun QuestionTracker(counter : Int = 10,
 
 @Composable
 fun DrawDottedLine(pathEffect : PathEffect) {
-
+    // Comment
 }
