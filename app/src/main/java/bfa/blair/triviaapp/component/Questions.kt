@@ -61,6 +61,10 @@ fun QuestionDisplay(
         question.choices.toMutableList()
     }
 
+    val answerState = remember(question) {
+        
+    }
+
     val pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
 
     Surface(modifier = Modifier
@@ -88,7 +92,8 @@ fun QuestionDisplay(
 
                 // Choices
                 choicesState.forEachIndexed { index, answerText ->
-                    Row(modifier = Modifier.padding(3.dp)
+                    Row(modifier = Modifier
+                        .padding(3.dp)
                         .fillMaxWidth()
                         .height(45.dp)
                         .border(width = 4.dp,
@@ -97,10 +102,11 @@ fun QuestionDisplay(
                             ),
                             shape = RoundedCornerShape(15.dp))
                         .clip(RoundedCornerShape(topStartPercent = 50,
-                                        topEndPercent = 50,
-                                        bottomStartPercent = 50,
-                                        bottomEndPercent = 50))
-                        .background(Color.Transparent)) {
+                            topEndPercent = 50,
+                            bottomStartPercent = 50,
+                            bottomEndPercent = 50))
+                        .background(Color.Transparent),
+                    verticalAlignment = Alignment.CenterVertically) {
 
                     }
                 }
