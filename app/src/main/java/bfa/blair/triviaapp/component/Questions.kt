@@ -7,11 +7,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,13 +37,14 @@ fun Question(viewModel: QuestionsViewModel) {
     val questions = viewModel.data.value.data?.toMutableList()
     if(viewModel.data.value.loading == true) {
         CircularProgressIndicator()
-        Log.d("Data Size", "Questions still loading")
     } else {
-        Log.d("Data Size", "Stopped loading")
-        questions?.forEach{questionItem ->
-            Log.d("Data Size", "Result: ${questionItem.question}")
-        }
+//        questions?.forEach{questionItem ->
+//            Log.d("Data Size", "Result: ${questionItem.question}")
+//        }
 
+        if(questions != null) {
+            QuestionDisplay(question = questions.first())
+        }
     }
 }
 
@@ -52,9 +52,9 @@ fun Question(viewModel: QuestionsViewModel) {
 @Composable
 fun QuestionDisplay(
     question: QuestionItem,
-    questionIndex : MutableState<Int>,
-    viewModel: QuestionsViewModel,
-    onNextClicked: (Int) -> Unit
+    // questionIndex : MutableState<Int>,
+    // viewModel: QuestionsViewModel,
+    onNextClicked: (Int) -> Unit = {}
 ) {
 
     val choicesState = remember(question) {
@@ -62,7 +62,18 @@ fun QuestionDisplay(
     }
 
     val answerState = remember(question) {
-        
+        mutableStateOf<Int?>(null)
+    }
+
+    val correctAnswerState = remember(question) {
+        mutableStateOf<Boolean?>(null)
+    }
+
+    val updateAnswer : (Int) -> Unit = remember {
+        {
+            answerState.value = it
+            correctAnswerState.value = choicesState[it] == question.answer
+        }
     }
 
     val pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
@@ -80,7 +91,7 @@ fun QuestionDisplay(
             DrawDottedLine(pathEffect)
 
             Column {
-                Text(text = "What does this mean?",
+                Text(text = question.question,
                     modifier = Modifier
                         .padding(6.dp)
                         .align(Alignment.Start)
@@ -107,7 +118,21 @@ fun QuestionDisplay(
                             bottomEndPercent = 50))
                         .background(Color.Transparent),
                     verticalAlignment = Alignment.CenterVertically) {
-
+                        RadioButton(selected = (answerState.value == index),
+                            onClick = {
+                                updateAnswer(index)
+                            },
+                            modifier = Modifier.padding(start = 16.dp),
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = if (correctAnswerState.value == true
+                                    && index == answerState.value) {
+                                    Color.Green.copy(alpha = 0.2f)
+                                } else {
+                                    Color.Red.copy(alpha = 0.2f)
+                                }
+                            )) // End rb
+                        
+                        Text(text = answerText)
                     }
                 }
             }
